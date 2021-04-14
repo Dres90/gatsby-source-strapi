@@ -23,7 +23,7 @@ const extractImage = async (image, ctx) => {
   // If we don't have cached data, download the file
   if (!fileNodeID) {
     // full media url
-    const source_url = `${image.url.startsWith('http') ? '' : apiURL}${image.url}`;
+    const source_url = buildImageUrl(image, apiURL);
     const fileNode = await createRemoteFileNode({
       url: source_url,
       store,
@@ -48,6 +48,28 @@ const extractImage = async (image, ctx) => {
   if (fileNodeID) {
     image.localFile___NODE = fileNodeID;
   }
+};
+
+const buildImageUrl = (image, apiURL) => {
+  const source_url = `${image.url.startsWith('http') ? '' : apiURL}${image.url}`;
+  const custom = image['__custom'];
+  if (!custom) return source_url;
+  let url = source_url.split('/');
+  if (custom.width || custom.height) {
+    let transform = '';
+    if (custom.width) {
+      transform += `w_${custom.width},`;
+    }
+    if (custom.height) {
+      transform += `h_${custom.height},`;
+    }
+    transform += 'c_scale';
+    url[6] = transform;
+  }
+  if (custom.format) {
+    url[7] = url[7].substr(0, url[7].lastIndexOf('.')) + '.' + custom.format;
+  }
+  return url.join('/');
 };
 
 const extractFields = async (item, ctx) => {

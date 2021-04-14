@@ -7,6 +7,18 @@ import normalize from './normalize';
 import authentication from './authentication';
 
 const toTypeInfo = (type, { single = false }) => {
+  if (type.name) {
+    let info = { name: type.name };
+    if (type.endpoint) {
+      info.endpoint = type.endpoint;
+    } else {
+      info.endpoint = single ? type.name : pluralize(type.name);
+    }
+    if (type.customMedia) {
+      info.customMedia = type.customMedia;
+    }
+    return info;
+  }
   if (type.endpoint) {
     return { endpoint: type.endpoint, name: type.name };
   }
@@ -17,10 +29,18 @@ const toTypeInfo = (type, { single = false }) => {
 const contentTypeToTypeInfo = toTypeInfo;
 const singleTypeToTypeInfo = (singleType) => toTypeInfo(singleType, { single: true });
 
-const fetchEntities = async ({ endpoint }, ctx) => {
-  const entities = await fetchData(endpoint, ctx);
+const fetchEntities = async ({ endpoint, customMedia }, ctx) => {
+  let entities = await fetchData(endpoint, ctx);
+  if (customMedia) {
+    entities.forEach((e) => {
+      customMedia.forEach((c) => {
+        if (e[c.field]) {
+          e[c.field]['__custom'] = c;
+        }
+      });
+    });
+  }
   await normalize.downloadMediaFiles(entities, ctx);
-
   return entities;
 };
 
@@ -63,7 +83,7 @@ exports.sourceNodes = async (
   const existingNodes = getNodes().filter((n) => n.internal.owner === `gatsby-source-strapi`);
 
   // Touch each one of them
-  existingNodes.forEach((n) => touchNode({ nodeId: n.id }));
+  existingNodes.forEach((n) => touchNode(n));
 
   // Merge single and content types and retrieve create nodes
   types.forEach(({ name }, i) => {
