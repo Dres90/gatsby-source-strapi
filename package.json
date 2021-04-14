@@ -1,31 +1,22 @@
 {
-  "name": "gatsby-source-strapi",
+  "name": "@dres.co/gatsby-source-strapi",
   "version": "1.0.0-alpha.0",
-  "description": "Gatsby source plugin for building websites using Strapi as a data source",
-  "author": {
-    "email": "hi@strapi.io",
-    "name": "Strapi Solutions",
-    "url": "http://strapi.io"
-  },
+  "description": "Gatsby source plugin for building websites using Strapi as a data source with custom cloudinary",
+  "author": "Andres Cardenas <andres@dres.co> (https://dres.co)",
   "maintainers": [
-    {
-      "name": "Strapi Solutions",
-      "email": "hi@strapi.io",
-      "url": "http://strapi.io"
-    }
+    "Andres Cardenas <andres@dres.co> (https://dres.co)"
   ],
   "directories": {
-    "lib": "./lib"
+    "lib": "lib"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/strapi/gatsby-source-strapi.git"
+    "url": "git://github.com/dres90/gatsby-source-strapi.git"
   },
   "bugs": {
-    "url": "https://github.com/strapi/gatsby-source-strapi/issues"
+    "url": "https://github.com/dres90/gatsby-source-strapi/issues"
   },
   "license": "MIT",
-  "homepage": "http://strapi.io",
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "babel src --out-dir lib",
